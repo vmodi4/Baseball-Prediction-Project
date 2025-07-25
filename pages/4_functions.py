@@ -16,7 +16,7 @@ def get_win_pct(wins, losses):
 
 #data = statsapi.standings_data(division="all", include_wildcard=True, season= "2025", standingsTypes= None, date= "06/05/2025")
 
-def get_team_info(team_id, date):
+def get_team_win_pct(team_id, date):
     data = statsapi.standings_data(division="all", include_wildcard=True, season= "2025", standingsTypes= None, date= date)
     for division_id, division_data in data.items():
         for team in division_data['teams']:

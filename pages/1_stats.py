@@ -1,12 +1,9 @@
 import streamlit as st
 import statsapi
+import pandas as pd
 
-st.write("dashboard")
+df = pd.read_csv("new_2025_mlb_dataset.csv")
 
-games = statsapi.schedule(start_date='08/01/2024',end_date='07/04/2025',team=143,opponent=121)
-
-
-for x in games: 
-    st.write(x['summary'])
-
-st.write(statsapi.get('teams'))
+# Show the first 5 rows
+st.write(df.head())
+st.write(len(df))
