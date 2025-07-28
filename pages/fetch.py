@@ -119,7 +119,8 @@ def create_csv_data_set(output_file, start_date, end_date):
             writer.writerow(row)
 
 # Create the dataset
-create_csv_data_set("new_2025_mlb_dataset.csv", "2025-03-29", "2025-07-23")
+#$create_csv_data_set("new_2025_mlb_dataset.csv", "2025-03-29", "2025-07-23")
+# uncomment if you want to create a new dataset again. 
 
 # Load the dataset and display it
 #df = pd.read_csv("mlb_dataset_june.csv")
