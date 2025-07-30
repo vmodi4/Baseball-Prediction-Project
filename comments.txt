@@ -6,3 +6,10 @@ from the gamePk, I need to convert into a row(which should have the )
 
 After one gamePk works, then i need to loop through a certain from a certain time-frame to get all pks,
 and create all the rows. t
+
+with st.container():
+        st.write(f"🏟️ {away_name} vs {home_name} on {date}")
+        st.write("🏠 Predicted Winner:", home_name if prediction == 1 else away_name)
+        st.write("📊 Probabilities:", {away_name: round(prob[0], 5), home_name: round(prob[1], 5)})
+        st.write("---")  # Add a separator between cards
+    

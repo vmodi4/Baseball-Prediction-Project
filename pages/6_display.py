@@ -42,6 +42,9 @@ user_input = {
 }
 
 def onClick(home_team_id, away_team_id, date, away_name, home_name):
+    st.write("Placeholder for the llm portion")
+
+def get_prediction(home_team_id, away_team_id, date):
     home_stats = get_all_stats(home_team_id, date)
     away_stats = get_all_stats(away_team_id, date)
     user_input = {
@@ -68,21 +71,66 @@ def onClick(home_team_id, away_team_id, date, away_name, home_name):
     prediction = model.predict(input_df)[0]
     prob = model.predict_proba(input_df)[0]
 
-    st.subheader("Today's Game Predictions")
-    st.write("🏠 Predicted Winner:", home_name if prediction == 1 else away_name)
-    st.write("📊 Probabilities:", {away_name: prob[0] , home_name: prob[1]})
+    return prediction, prob
 
-    
+
+rows = [st.columns(3) for _ in range(6)] 
+new_tiles = [col for row in rows for col in row]
+
 
 current_date = datetime.now().strftime("%Y-%m-%d")
 new_date = convert_date(current_date)
 new_games = statsapi.schedule(start_date=current_date, end_date=current_date)
-for game in new_games:
+i = 0
+for i, game in enumerate(new_games):
+    if i>= len(new_tiles):
+        break
     away_team_id = game['away_id']
     home_team_id = game['home_id']
+    away_name = game['away_name']
+    home_name = game['home_name']
     date = game['game_date']
-    st.write(game['away_name'], "vs", game['home_name'], "on", game['game_date'])
-    st.button("Predict Winner", key = game['away_id'], on_click = onClick, args=(home_team_id, away_team_id, game['game_date'], game['away_name'], game['home_name']))
+
+    prediction, prob= get_prediction(home_team_id, away_team_id, date)
+
+    
+
+    with new_tiles[i]:
+        tile = new_tiles[i].container(height = 300)
+        with tile:
+           st.write(f"🏟️ {away_name} vs {home_name} on {date}")
+           st.write("🏠 Predicted Winner:", home_name if prediction == 1 else away_name)
+           st.write("📊 Probabilities:", {away_name: round(prob[0], 5), home_name: round(prob[1], 5)})
+           #figure out how to cache data, search for particular games based on team name: 
+         
+        
+        
+        
+  
+
+        
+    
+
+    
+
+
+
+    
+    
+
+    # feed in these as parameters
+    #st.write(game['away_name'], "vs", game['home_name'], "on", game['game_date'])
+    #st.button("Predict Winner", key = game['away_id'], on_click = onClick)
+
+    
+   
+
+
+  
+    
+
+  
+
    
     
 
