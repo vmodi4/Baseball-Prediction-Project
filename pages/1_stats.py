@@ -17,7 +17,17 @@ for game in schedule:
 
     st.write(winning_team)
 
+team_id = 117
+
+https://www.mlbstatic.com/team-logos/team-cap-on-dark/{teamId}.svg
+
+url_endpoint = 'https://www.mlbstatic.com/team-logos/team-cap-on-dark/{team_id}.svg'
+st.write(url_endpoint)
+
+
     # let's use this file to store the previous predictions and the acutao wine
+
+    # connect database to this project. 
 
     # outline- create a drop down for previous dates: 
     # that date will be stored in a variable and then use schedule api to call all the games: 

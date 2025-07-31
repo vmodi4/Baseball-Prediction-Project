@@ -28,7 +28,6 @@ model_columns = [
 
 
 
-# Example: Simulate your get_all_stats() returning a dictionary of input values
 
 
 def onClick(home_team_id, away_team_id, date, away_name, home_name):
@@ -84,6 +83,8 @@ new_games = statsapi.schedule(start_date= get_new_date(), end_date= get_new_date
 num_of_games = len(new_games)
 correct_predictions = 0; 
 
+
+
 i = 0
 finalized_games = 0
 
@@ -92,6 +93,8 @@ for i, game in enumerate(new_games):
         break
     away_team_id = game['away_id']
     home_team_id = game['home_id']
+    away_team_score = game['away_score']
+    home_team_score = game['home_score']
     away_name = game['away_name']
     home_name = game['home_name']
     date = game['game_date']
@@ -129,13 +132,19 @@ for i, game in enumerate(new_games):
            st.write(f"🏟️ {away_name} vs {home_name} on {date}")
            st.write("🏠 Predicted Winner:", home_name if prediction == 1 else away_name)
            st.write("📊 Probabilities:", {away_name: round(prob[0], 5), home_name: round(prob[1], 5)})
+           st.write("Current Game Status:", game_status)
+           st.write(f"Score: {away_name} {away_team_score} - {home_name} {home_team_score}")
 
 
 def display_prediction_summary():
     st.subheader("Prediction Summary for Day")
     st.write(f"Number of games for the day: {num_of_games}")
     st.write(f"Correct Predictions: {correct_predictions}")
-    st.write(f"Prediction Accuracy: {correct_predictions / finalized_games * 100:.2f}%" + f"({correct_predictions}/{finalized_games})")
+    if(finalized_games == 0):
+        st.write("No games have finished yet")
+    else:
+        st.write(f"Prediction Accuracy: {correct_predictions / finalized_games * 100:.2f}%" + f"({correct_predictions}/{finalized_games})")
+   
     # instead of number of games, I need number of games that have finalized. 
 
 
