@@ -11,6 +11,12 @@ import pandas as pd
 
 
 model = joblib.load('mlb_rf_model.pkl')
+current_date = datetime.now().strftime("%Y-%m-%d")
+
+
+st.header(f"MLB Game Predictions for {current_date}")
+
+
 
 # Define the column order manually (excluding the target)
 model_columns = [
@@ -23,26 +29,18 @@ model_columns = [
 
 
 # Example: Simulate your get_all_stats() returning a dictionary of input values
-user_input = {
-    "home_win_pct": 0.56,
-    "home_obp": 0.321,
-    "home_home_runs": 98,
-    "home_ops": 0.780,
-    "home_era": 3.90,
-    "home_whip": 1.22,
-    "home_strikeouts": 910,
-    "away_win_pct": 0.51,
-    "away_obp": 0.310,
-    "away_home_runs": 110,
-    "away_ops": 0.750,
-    "away_era": 4.01,
-    "away_whip": 1.30,
-    "away_strikeouts": 875,
-    "is_home": 1
-}
+
 
 def onClick(home_team_id, away_team_id, date, away_name, home_name):
     st.write("Placeholder for the llm portion")
+
+def get_game_winner(game_status, winning_team):
+    if game_status == "Final":
+        return winning_team
+    else:
+        return 
+    
+    
 
 def get_prediction(home_team_id, away_team_id, date):
     home_stats = get_all_stats(home_team_id, date)
@@ -77,11 +75,18 @@ def get_prediction(home_team_id, away_team_id, date):
 rows = [st.columns(3) for _ in range(6)] 
 new_tiles = [col for row in rows for col in row]
 
+def get_new_date():
+    current_date = datetime.now().strftime("%Y-%m-%d")
+    return convert_date(current_date)
 
-current_date = datetime.now().strftime("%Y-%m-%d")
-new_date = convert_date(current_date)
-new_games = statsapi.schedule(start_date=current_date, end_date=current_date)
+
+new_games = statsapi.schedule(start_date= get_new_date(), end_date= get_new_date())
+num_of_games = len(new_games)
+correct_predictions = 0; 
+
 i = 0
+finalized_games = 0
+
 for i, game in enumerate(new_games):
     if i>= len(new_tiles):
         break
@@ -90,8 +95,31 @@ for i, game in enumerate(new_games):
     away_name = game['away_name']
     home_name = game['home_name']
     date = game['game_date']
+    game_status = game['status']
+    if game_status == "Final":
+        winning_team = game['winning_team']
+        finalized_games+=1
+
+    else:
+        winning_team = "Game not finished yet"
+
+
 
     prediction, prob= get_prediction(home_team_id, away_team_id, date)
+
+    #store predicted winner in a variable
+
+    predicted_game_winner = home_name if prediction == 1 else away_name
+
+
+    if(winning_team == predicted_game_winner):
+        correct_predictions += 1
+    else:
+        correct_predictions += 0
+
+    
+    
+
 
     
 
@@ -101,6 +129,17 @@ for i, game in enumerate(new_games):
            st.write(f"🏟️ {away_name} vs {home_name} on {date}")
            st.write("🏠 Predicted Winner:", home_name if prediction == 1 else away_name)
            st.write("📊 Probabilities:", {away_name: round(prob[0], 5), home_name: round(prob[1], 5)})
+
+
+def display_prediction_summary():
+    st.subheader("Prediction Summary for Day")
+    st.write(f"Number of games for the day: {num_of_games}")
+    st.write(f"Correct Predictions: {correct_predictions}")
+    st.write(f"Prediction Accuracy: {correct_predictions / finalized_games * 100:.2f}%" + f"({correct_predictions}/{finalized_games})")
+    # instead of number of games, I need number of games that have finalized. 
+
+
+st.write(display_prediction_summary())
            #figure out how to cache data, search for particular games based on team name: 
          
         
@@ -118,9 +157,7 @@ for i, game in enumerate(new_games):
     
     
 
-    # feed in these as parameters
-    #st.write(game['away_name'], "vs", game['home_name'], "on", game['game_date'])
-    #st.button("Predict Winner", key = game['away_id'], on_click = onClick)
+   
 
     
    
@@ -142,26 +179,4 @@ for i, game in enumerate(new_games):
 
 
 
-'''current_date = datetime.now().strftime("%Y-%m-%d")
-new_date = convert_date(current_date)
-st.write(new_date)
-new_games = statsapi.schedule(start_date=current_date, end_date=current_date)
-for game in new_games:
 
-    away_team_id = game['away_id']
-    home_team_id = game['home_id']
-    away_score = game['away_score']
-    home_score = game['home_score']
-    date = game['game_date']
-    game_winner_label = get_game_winner(away_score, home_score)
-    home_stats = get_all_stats(home_team_id, date)
-    away_stats = get_all_stats(away_team_id, date)
-    
-    # display some info
-    # have a streamlit button(to click predict game)
-    st.write(game)
-
-
-
-# def button_click(input right parameters):
-# return model info. '''

@@ -3,8 +3,12 @@ import statsapi
 import csv
 
 
-games = statsapi.schedule(start_date="06/01/2025", end_date="06/02/2025")
+games = statsapi.schedule(start_date="07/28/2025", end_date="07/29/2025")
 st.write(games)
+
+
+
+# get the winning team and make sure status is "Final"
 
 
 
