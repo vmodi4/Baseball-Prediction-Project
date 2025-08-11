@@ -6,6 +6,7 @@ import joblib
 from pages.fetch import get_all_stats
 import pandas as pd
 import requests
+from supabase_client import supabase
 
 def get_team_logo(team_id):
     url_endpoint = f"https://www.mlbstatic.com/team-logos/team-cap-on-dark/{team_id}.svg"
@@ -77,8 +78,12 @@ def get_prediction(home_team_id, away_team_id, date):
     input_df = pd.DataFrame([user_input])[model_columns]
 
 # Make prediction
-    prediction = model.predict(input_df)[0]
-    prob = model.predict_proba(input_df)[0]
+    prediction_from_model = model.predict(input_df)[0]
+    prediction = int(prediction_from_model)  # Ensure it's a Python int, not numpy.int64
+
+    prob_from_model = model.predict_proba(input_df)[0]
+    prob = prob_from_model.tolist()  # [0.32, 0.68]
+    
 
     return prediction, prob
 
@@ -127,6 +132,10 @@ for i, game in enumerate(new_games):
     
     prediction, prob= get_prediction(home_team_id, away_team_id, date)
 
+    
+
+
+
     new_record = {
         "date": date,
         'away_logo': away_logo,
@@ -135,9 +144,24 @@ for i, game in enumerate(new_games):
         "home_name": home_name,
         "prediction" : prediction,
         "prob": prob, 
+        "away_team_score": away_team_score,
+        "home_team_score": home_team_score,
 
 
     }
+
+    existing = supabase.from_("records").select("*").eq("date", date).eq("away_name", away_name).eq("home_name", home_name).execute()
+
+    
+    
+    if not existing.data:
+        record = supabase.from_("records").insert(new_record).execute()
+
+    
+
+
+    
+
 
     #store predicted winner in a variable
 
@@ -159,6 +183,21 @@ for i, game in enumerate(new_games):
     
 
     
+
+
+    data = {
+    "date": date,
+    "num_of_games": num_of_games,
+    "correct_predictions": correct_predictions,
+    "finalized_games": finalized_games,
+  }
+    
+if finalized_games == num_of_games:
+    response = supabase.from_("cumulative").insert(data).execute()
+
+
+
+
 
 
 def display_prediction_summary():

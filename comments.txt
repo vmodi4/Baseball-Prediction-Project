@@ -1,0 +1,5 @@
+Create two different post requests: 
+
+One that gives the actual record and one that posts information about the overall metrics 
+
+I can just split into two different databases. 

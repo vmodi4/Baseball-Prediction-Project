@@ -15,10 +15,6 @@ SUPABASE_PRIVATE_KEY = os.getenv("SUPABASE_KEY")  # Ensure
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_PRIVATE_KEY)
 
 
-response = supabase.from_("random").select("*").execute()
-response_json = response.data
-name = response_json[0]['name'] if response_json else "No data found"
-st.write(name)
 
 # connection to database works 
 

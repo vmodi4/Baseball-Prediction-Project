@@ -6,6 +6,10 @@ import joblib
 from pages.fetch import get_all_stats
 import pandas as pd
 import requests
+import data
+
+from streamlit_echarts import st_echarts
+
 
 def get_team_logo(team_id):
     url_endpoint = f"https://www.mlbstatic.com/team-logos/team-cap-on-dark/{team_id}.svg"
@@ -79,7 +83,9 @@ def get_prediction(home_team_id, away_team_id, date):
 
 # Make prediction
     prediction = model.predict(input_df)[0]
+   # Ensure it's a Python int, not numpy.int64
     prob = model.predict_proba(input_df)[0]
+    
 
     return prediction, prob
 
