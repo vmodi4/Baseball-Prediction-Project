@@ -151,7 +151,7 @@ for i, game in enumerate(new_games):
 
     # now put all of these variables in a post request to the database
 
-    
+
 
     
     
@@ -171,6 +171,8 @@ def display_prediction_summary():
         st.write(f"Prediction Accuracy: {correct_predictions / finalized_games * 100:.2f}%" + f"({correct_predictions}/{finalized_games})")
    
     # instead of number of games, I need number of games that have finalized. 
+
+    # testing
 
 
 st.write(display_prediction_summary())
