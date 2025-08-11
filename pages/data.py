@@ -52,8 +52,7 @@ def get_game_winner(game_status, winning_team):
     else:
         return 
     
-    
-@st.cache_data
+
 def get_prediction(home_team_id, away_team_id, date):
     home_stats = get_all_stats(home_team_id, date)
     away_stats = get_all_stats(away_team_id, date)
@@ -128,6 +127,18 @@ for i, game in enumerate(new_games):
     
     prediction, prob= get_prediction(home_team_id, away_team_id, date)
 
+    new_record = {
+        "date": date,
+        'away_logo': away_logo,
+        'home_logo': home_logo,
+        "away_name": away_name,
+        "home_name": home_name,
+        "prediction" : prediction,
+        "prob": prob, 
+
+
+    }
+
     #store predicted winner in a variable
 
     predicted_game_winner = home_name if prediction == 1 else away_name
@@ -138,29 +149,16 @@ for i, game in enumerate(new_games):
     else:
         correct_predictions += 0
 
+    # now put all of these variables in a post request to the database
+
+    
+
     
     
      
     
 
-    with new_tiles[i]:
-        tile = new_tiles[i].container(height = 300)
-        with tile:
-           #st.image(away_team_id, width = 100)
-           #st.image(home_team_id, width = 100)
-
-           with st.container():
-               st.image(away_logo, width=25)
-               st.write(away_name)
-               st.image(home_logo, width=25)
-               st.write(home_name)
-           
-
-           winner = home_name if prediction == 1 else away_name
-           st.markdown(f"Predicted Winner: <span style='color:lightgreen;'>{winner}</span>", unsafe_allow_html=True)
-           st.write("📊 Probabilities:", {away_name: round(prob[0], 5), home_name: round(prob[1], 5)})
-           st.write("Current Game Status:", game_status)
-           st.write(f"Score: {away_name} {away_team_score} - {home_name} {home_team_score}")
+    
 
 
 def display_prediction_summary():
