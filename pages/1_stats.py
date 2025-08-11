@@ -1,6 +1,7 @@
 import streamlit as st
 import statsapi
 import pandas as pd
+import requests
 
 df = pd.read_csv("new_2025_mlb_dataset.csv")\
 
@@ -17,12 +18,23 @@ for game in schedule:
 
     st.write(winning_team)
 
-team_id = 117
+team_id  = 117 
 
-https://www.mlbstatic.com/team-logos/team-cap-on-dark/{teamId}.svg
 
-url_endpoint = 'https://www.mlbstatic.com/team-logos/team-cap-on-dark/{team_id}.svg'
+
+url_endpoint = f"https://www.mlbstatic.com/team-logos/team-cap-on-dark/{team_id}.svg"
 st.write(url_endpoint)
+st.image(url_endpoint, width = 100)
+st.write("hello ")
+
+
+
+response = requests.get(url_endpoint)
+
+#st.write(data)
+
+
+
 
 
     # let's use this file to store the previous predictions and the acutao wine

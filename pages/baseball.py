@@ -3,8 +3,8 @@ import statsapi
 import csv
 
 
-games = statsapi.schedule(start_date="07/28/2025", end_date="07/29/2025")
-st.write(games)
+games = statsapi.schedule(start_date="07/29/2025", end_date="07/29/2025")
+#
 
 
 

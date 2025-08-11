@@ -1,0 +1,4 @@
+think about database setup: 
+
+
+two tables - one that has the date the 
