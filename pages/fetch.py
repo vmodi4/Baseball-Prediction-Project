@@ -70,7 +70,7 @@ def get_all_stats(team_id, date):
         "whip": whip,
         "strikeouts": strikeouts
     }
-st.write(get_all_stats(117, "2025-06-05"))  # Example date, adjust as needed
+  # Example date, adjust as needed
 
 def get_game_winner(away_score, home_score):
     if away_score > home_score:

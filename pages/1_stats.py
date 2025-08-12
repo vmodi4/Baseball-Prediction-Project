@@ -10,29 +10,34 @@ from supabase_client import supabase
 from streamlit_echarts import st_echarts
 
 
-st.title("View Predictions from previous dates")
+st.title("View Predictions from previous dates(Nothing before 2025-08-11)")
 
 # Default to today's date
 date = st.date_input(
     "Select a date",
-    datetime.date.today()
+    datetime.date.today(),
+    max_value=datetime.date.today()
 )
 
 
 games = supabase.from_("cumulative").select("*").eq("date", date.strftime("%Y-%m-%d")).execute()
-st.write(games)
 
-num_of_games = games.data[0]['num_of_games']
-correct_predictions = games.data[0]['correct_predictions']
-finalized_games = games.data[0]['finalized_games']
 
-pie_data = [
+
+if not games.data:
+   st.title("No games found for this date.")
+else:
+   num_of_games = games.data[0]['num_of_games']
+   correct_predictions = games.data[0]['correct_predictions']
+   finalized_games = games.data[0]['finalized_games']
+
+   pie_data = [
     {"value": correct_predictions, "name": "Correct Predictions"},
     {"value": finalized_games - correct_predictions, "name": "Incorrect Predictions"},
     {"value": num_of_games - finalized_games, "name": "Unfinished Games"},
-]
+  ]
 
-option = {
+   option = {
     "title": {"text": "Prediction Summary", "left": "center"},
     "tooltip": {"trigger": "item"},
     "legend": {"orient": "vertical", "left": "left"},
@@ -43,15 +48,21 @@ option = {
             "radius": ["50%", "70%"],  # donut chart
             "avoidLabelOverlap": False,
             "itemStyle": {"borderRadius": 10, "borderColor": "#fff", "borderWidth": 2},
-            "label": {"show": False, "position": "center"},
+            "label": {
+                "show": True,
+                "position": "outside",
+                "formatter": "{b}: {c}"  # Show label and value
+            },
             "emphasis": {"label": {"show": True, "fontSize": "18", "fontWeight": "bold"}},
-            "labelLine": {"show": False},
+            "labelLine": {"show": True},
             "data": pie_data,
         }
     ],
 }
 
-st_echarts(options=option, height="400px")
+   st_echarts(options=option, height="400px")
+   
+
 
 
 
@@ -73,7 +84,7 @@ rows = [st.columns(3) for _ in range(6)]
 new_tiles = [col for row in rows for col in row]
 
 if not response.data:
-    st.title("No games found for this date.")
+    st.title("Come Back to this date")
 else:
    for i, record in enumerate(response.data):
       if i>= len(new_tiles):
