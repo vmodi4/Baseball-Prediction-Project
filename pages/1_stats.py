@@ -7,6 +7,8 @@ import requests
 import streamlit as st
 import datetime
 from supabase_client import supabase
+from streamlit_echarts import st_echarts
+
 
 st.title("View Predictions from previous dates")
 
@@ -16,23 +18,64 @@ date = st.date_input(
     datetime.date.today()
 )
 
+
+games = supabase.from_("cumulative").select("*").eq("date", date.strftime("%Y-%m-%d")).execute()
+st.write(games)
+
+num_of_games = games.data[0]['num_of_games']
+correct_predictions = games.data[0]['correct_predictions']
+finalized_games = games.data[0]['finalized_games']
+
+pie_data = [
+    {"value": correct_predictions, "name": "Correct Predictions"},
+    {"value": finalized_games - correct_predictions, "name": "Incorrect Predictions"},
+    {"value": num_of_games - finalized_games, "name": "Unfinished Games"},
+]
+
+option = {
+    "title": {"text": "Prediction Summary", "left": "center"},
+    "tooltip": {"trigger": "item"},
+    "legend": {"orient": "vertical", "left": "left"},
+    "series": [
+        {
+            "name": "Predictions",
+            "type": "pie",
+            "radius": ["50%", "70%"],  # donut chart
+            "avoidLabelOverlap": False,
+            "itemStyle": {"borderRadius": 10, "borderColor": "#fff", "borderWidth": 2},
+            "label": {"show": False, "position": "center"},
+            "emphasis": {"label": {"show": True, "fontSize": "18", "fontWeight": "bold"}},
+            "labelLine": {"show": False},
+            "data": pie_data,
+        }
+    ],
+}
+
+st_echarts(options=option, height="400px")
+
+
+
+
+
+
+
+
 response = supabase.from_("records").select("*").eq("date", date.strftime("%Y-%m-%d")).execute()
-st.write(response.data)
-away_name = response.data[0]['away_name']
-home_name = response.data[0]['home_name']
-away_logo = response.data[0]['away_logo']
-home_logo = response.data[0]['home_logo']
-prob = response.data[0]['prob']
-prediction = response.data[0]['prediction']
-away_team_score = response.data[0]['away_team_score']
-home_team_score = response.data[0]['home_team_score']
+
+
+
+
+
 
 # got it in a response now show the data: 
 
 rows = [st.columns(3) for _ in range(6)] 
 new_tiles = [col for row in rows for col in row]
 
-for i, record in enumerate(response.data):
+if not response.data:
+    st.title("No games found for this date.")
+else:
+   for i, record in enumerate(response.data):
       if i>= len(new_tiles):
         break
       
@@ -61,7 +104,7 @@ for i, record in enumerate(response.data):
            winner = home_name if prediction == 1 else away_name
            st.markdown(f"Predicted Winner: <span style='color:lightgreen;'>{winner}</span>", unsafe_allow_html=True)
            st.write("📊 Probabilities:", {away_name: round(prob[0], 5), home_name: round(prob[1], 5)})
-           st.write(f"Score: {away_name} {away_team_score} - {home_name} {home_team_score}")  
+           st.write(f"Final Score: {away_name} {away_team_score} - {home_name} {home_team_score}")  
            
       
 

@@ -155,7 +155,8 @@ for i, game in enumerate(new_games):
     
     
     if not existing.data:
-        record = supabase.from_("records").insert(new_record).execute()
+        if finalized_games == num_of_games:
+          record = supabase.from_("records").insert(new_record).execute()
 
     
 

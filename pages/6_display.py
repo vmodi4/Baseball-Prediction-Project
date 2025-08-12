@@ -6,7 +6,7 @@ import joblib
 from pages.fetch import get_all_stats
 import pandas as pd
 import requests
-import data
+
 
 from streamlit_echarts import st_echarts
 
@@ -110,64 +110,63 @@ finalized_games = 0
 
 
 
-for i, game in enumerate(new_games):
-    if i>= len(new_tiles):
-        break
-    away_team_id = game['away_id']
-    home_team_id = game['home_id']
-    away_team_score = game['away_score']
-    home_team_score = game['home_score']
-    away_name = game['away_name']
-    home_name = game['home_name']
-    date = game['game_date']
-    game_status = game['status']
-    away_logo = get_team_logo(away_team_id)
-    home_logo = get_team_logo(home_team_id)
-    if game_status == "Final":
-        winning_team = game['winning_team']
-        finalized_games+=1
 
-    else:
-        winning_team = "Game not finished yet"
+tile_data = []
 
+with st.spinner("Loading games and predictions..."):
+    for i, game in enumerate(new_games):
+        if i >= len(new_tiles):
+            break
+        away_team_id = game['away_id']
+        home_team_id = game['home_id']
+        away_team_score = game['away_score']
+        home_team_score = game['home_score']
+        away_name = game['away_name']
+        home_name = game['home_name']
+        date = game['game_date']
+        game_status = game['status']
+        away_logo = get_team_logo(away_team_id)
+        home_logo = get_team_logo(home_team_id)
+        if game_status == "Final":
+            winning_team = game['winning_team']
+            finalized_games += 1
+        else:
+            winning_team = "Game not finished yet"
 
-    
-    prediction, prob= get_prediction(home_team_id, away_team_id, date)
+        prediction, prob = get_prediction(home_team_id, away_team_id, date)
+        predicted_game_winner = home_name if prediction == 1 else away_name
+        if winning_team == predicted_game_winner:
+            correct_predictions += 1
 
-    #store predicted winner in a variable
+        winner = home_name if prediction == 1 else away_name
+        tile_data.append({
+            "away_logo": away_logo,
+            "away_name": away_name,
+            "home_logo": home_logo,
+            "home_name": home_name,
+            "winner": winner,
+            "prob": {away_name: round(prob[0], 5), home_name: round(prob[1], 5)},
+            "game_status": game_status,
+            "score": f"{away_name} {away_team_score} - {home_name} {home_team_score}"
+        })
 
-    predicted_game_winner = home_name if prediction == 1 else away_name
-
-
-    if(winning_team == predicted_game_winner):
-        correct_predictions += 1
-    else:
-        correct_predictions += 0
-
-    
-    
-     
-    
-
+# Now render all tiles at once
+for i, data in enumerate(tile_data):
     with new_tiles[i]:
-        tile = new_tiles[i].container(height = 300)
+        tile = new_tiles[i].container(height=300)
         with tile:
-           #st.image(away_team_id, width = 100)
-           #st.image(home_team_id, width = 100)
-
-           with st.container():
-               st.image(away_logo, width=25)
-               st.write(away_name)
-               st.image(home_logo, width=25)
-               st.write(home_name)
-           
-
-           winner = home_name if prediction == 1 else away_name
-           st.markdown(f"Predicted Winner: <span style='color:lightgreen;'>{winner}</span>", unsafe_allow_html=True)
-           st.write("📊 Probabilities:", {away_name: round(prob[0], 5), home_name: round(prob[1], 5)})
-           st.write("Current Game Status:", game_status)
-           st.write(f"Score: {away_name} {away_team_score} - {home_name} {home_team_score}")
-
+            with st.container():
+                st.image(data["away_logo"], width=25)
+                st.write(data["away_name"])
+                st.image(data["home_logo"], width=25)
+                st.write(data["home_name"])
+            st.markdown(
+                f"Predicted Winner: <span style='color:lightgreen;'>{data['winner']}</span>",
+                unsafe_allow_html=True
+            )
+            st.write("📊 Probabilities:", data["prob"])
+            st.write("Current Game Status:", data["game_status"])
+            st.write(f"Score: {data['score']}")
 
 def display_prediction_summary():
     st.subheader("Prediction Summary for Day")
