@@ -23,7 +23,6 @@ date = st.date_input(
 games = supabase.from_("cumulative").select("*").eq("date", date.strftime("%Y-%m-%d")).execute()
 
 
-
 if not games.data:
    st.title("No games found for this date.")
 else:

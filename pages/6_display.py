@@ -99,6 +99,7 @@ def get_new_date():
 
 
 new_games = statsapi.schedule(start_date= get_new_date(), end_date= get_new_date())
+
 num_of_games = len(new_games)
 correct_predictions = 0; 
 
@@ -113,7 +114,7 @@ finalized_games = 0
 
 tile_data = []
 
-with st.spinner("Loading games and predictions..."):
+with st.spinner("Calculating Predictions for Today's Games..."):
     for i, game in enumerate(new_games):
         if i >= len(new_tiles):
             break

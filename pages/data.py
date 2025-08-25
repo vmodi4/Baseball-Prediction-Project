@@ -1,5 +1,6 @@
 import statsapi
-from datetime import datetime
+from datetime import datetime, timedelta
+
 import streamlit as st
 from pages.fetch import convert_date
 import joblib
@@ -95,8 +96,16 @@ def get_new_date():
     current_date = datetime.now().strftime("%Y-%m-%d")
     return convert_date(current_date)
 
+def get_prev_date():
+    prev_date = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+    return convert_date(prev_date) 
 
-new_games = statsapi.schedule(start_date= get_new_date(), end_date= get_new_date())
+
+actual_date = get_prev_date()
+
+
+
+new_games = statsapi.schedule(start_date= actual_date, end_date= actual_date)
 num_of_games = len(new_games)
 correct_predictions = 0; 
 
@@ -155,7 +164,6 @@ for i, game in enumerate(new_games):
     
     
     if not existing.data:
-        if finalized_games == num_of_games:
           record = supabase.from_("records").insert(new_record).execute()
 
     
