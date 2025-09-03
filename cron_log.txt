@@ -1,0 +1,24 @@
+Traceback (most recent call last):
+  File "/Users/vigneshmodigunta/Baseball Project/update_mlb_predictions.py", line 1, in <module>
+    import statsapi
+ModuleNotFoundError: No module named 'statsapi'
+Traceback (most recent call last):
+  File "/Users/vigneshmodigunta/Baseball Project/update_mlb_predictions.py", line 1, in <module>
+    import statsapi
+ModuleNotFoundError: No module named 'statsapi'
+2025-08-28 12:24:01.650 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2025-08-28 12:24:01.738 
+  [33m[1mWarning:[0m to view this Streamlit app on a browser, run it with the following
+  command:
+
+    streamlit run /Users/vigneshmodigunta/Baseball Project/update_mlb_predictions.py [ARGUMENTS]
+2025-08-28 12:24:01.738 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2025-08-28 12:24:01.738 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2025-08-28 12:24:01.738 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+Traceback (most recent call last):
+  File "/Users/vigneshmodigunta/Baseball Project/update_mlb_predictions.py", line 20, in <module>
+    model = joblib.load('mlb_rf_model.pkl')
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/joblib/numpy_pickle.py", line 735, in load
+    with open(filename, "rb") as f:
+         ~~~~^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'mlb_rf_model.pkl'

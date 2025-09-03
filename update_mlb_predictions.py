@@ -20,13 +20,7 @@ def get_team_logo(team_id):
 model = joblib.load('mlb_rf_model.pkl')
 current_date = datetime.now().strftime("%Y-%m-%d")
 
-def get_team_logo(team_id):
-    url_endpoint = f"https://www.mlbstatic.com/team-logos/team-cap-on-dark/{team_id}.svg"
-    response = requests.get(url_endpoint)
-    if response.status_code == 200:
-        return url_endpoint
-    else:
-        return None
+
 
 
 st.header(f"MLB Game Predictions for {current_date}")
@@ -106,6 +100,7 @@ actual_date = get_prev_date()
 
 
 new_games = statsapi.schedule(start_date= actual_date, end_date= actual_date)
+st.write(new_games)
 num_of_games = len(new_games)
 correct_predictions = 0; 
 
